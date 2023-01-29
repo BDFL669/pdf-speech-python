@@ -59,14 +59,16 @@ def home():
         if form.validate_on_submit():
         #global file
             file = form.files.data # First grab the file
-            filename_re = re.sub(r"\s", "_", file.filename)
+            filename_re = re.sub(r"[\s]", "_", file.filename)
+            #filename_re = re.sub(r"[\(\)]", "", filename_re)
             file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(filename_re))) # Then save the file
         
         # if file is not empty
             if file is not None:
             #print(file.filename)
                 global filename_reg
-                filename_reg = re.sub(r"\s", "_", file.filename)
+                filename_reg = re.sub(r"[\s]", "_", file.filename)
+                filename_reg = re.sub(r"[\(\)]", "", filename_reg)
                 reader = PdfReader(filename_reg)
                 number_of_pages = len(reader.pages)
                 global filenoun
@@ -74,7 +76,7 @@ def home():
                 page = reader.pages[0]
                 text = page.extract_text()
             #print(text)
-                os.remove(file.filename)
+                os.remove(filename_reg)
                 global audio_file 
                 
                 audio_file = f'{filename_reg}.mp3'
@@ -86,10 +88,7 @@ def home():
                 #upload_file(file_tag, file_tag, fs)
                 with open(file_tag, "wb") as f:
                    tts.write_to_fp(f)
-                with open(file_tag, "rb") as f:
-                    fs.put(f, filename=file_tag)
-                    print("Upload Complete")
-                #file_tag.close()
+                   f.close()                
                 try:
                     #pass
                     #global download
@@ -110,4 +109,4 @@ def home():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
