@@ -11,35 +11,6 @@ import os
 from wtforms.validators import InputRequired
 import psutil
 import re as re
-from pymongo import MongoClient
-import gridfs
-
-URL = 'mongodb+srv://lowa:pdftoaudio@cluster0.ln44kqj.mongodb.net/test'
-
-def mongo_connect():
-    try:
-        conn = MongoClient(URL, port=5000)
-        print("MongoDB Connected!", conn)
-        return conn.AudioFiles
-    except Exception as err:
-        print(f"Error in MongoDB connection: {err}")
-
-client = MongoClient()
-db = client.AudioFIles
-fs = gridfs.GridFS(db)
-
-mongo_connect()
-
-
-def upload_file(file_loc, filename, fs):
-    with open(file_loc, 'rb') as file_data:
-        data = file_data.read()
-
-        #insert audio file in db
-        
-
-def delete_file():
-    pass
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
@@ -48,7 +19,7 @@ app.config['UPLOAD_FOLDER'] = ''
 class UploadFileForm(FlaskForm):
     files = FileField("File", validators=[InputRequired()])
     submit = SubmitField("Upload PDF")
-download = False
+#download = False
 filename_reg = ''
 file_tag = ''
 @app.route('/', methods=['GET',"POST"])
@@ -65,6 +36,17 @@ def home():
         
         # if file is not empty
             if file is not None:
+                path = os.getcwd()
+                audios = os.listdir(path)
+
+                mp3_files = [audio for audio in audios if audio.endswith('.mp3')]
+
+                if mp3_files:
+                    for audio in mp3_files:
+                        os.remove(os.path.join(path, audio))
+                        print('Deleted', len(mp3_files), 'mp3 file(s).')
+                    else:
+                        print('No mp3 files found.')
             #print(file.filename)
                 global filename_reg
                 filename_reg = re.sub(r"[\s]", "_", file.filename)
