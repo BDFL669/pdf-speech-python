@@ -52,11 +52,11 @@ def home():
                 filename_reg = re.sub(r"[\s]", "_", file.filename)
                 filename_reg = re.sub(r"[\(\)]", "", filename_reg)
                 reader = PdfReader(filename_reg)
-                number_of_pages = len(reader.pages)
-                global filenoun
-                filenoun = file.filename
-                page = reader.pages[0]
-                text = page.extract_text()
+                for page_num in range(len(reader.pages)):
+                    page = reader.pages[page_num]
+    
+    # Extract the text from the page
+                    text = page.extract_text()
             #print(text)
                 os.remove(filename_reg)
                 global audio_file 
