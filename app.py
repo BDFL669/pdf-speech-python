@@ -45,14 +45,14 @@ def home():
                 filename_reg = re.sub(r"[\(\)]", "", filename_reg)
                 reader = PdfReader(filename_reg)
                 number_of_pages = len(reader.pages)
-                print(number_of_pages)
+                #print(number_of_pages)
                 text = []
                 for page_num in range(len(reader.pages)):
                     page = reader.pages[page_num]
                     text.append(page.extract_text())
                 text = ' '.join(text)
                 text = text.replace('\n', ' ')
-                print(text)
+                #print(text)
     
     
                 os.remove(filename_reg)
